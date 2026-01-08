@@ -4,7 +4,6 @@ import '../providers/habit_providers.dart';
 import '../widgets/habit_card.dart';
 import 'add_habit_screen.dart';
 import 'habit_detail_screen.dart';
-import 'package:intl/intl.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import 'contribution_grid.dart';
-import 'dart:math' as math;
 
 class HabitCard extends StatelessWidget {
   final Habit habit;
