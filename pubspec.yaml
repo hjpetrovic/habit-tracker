@@ -1,0 +1,41 @@
+name: habit_tracker
+description: A habit tracker application built with Flutter.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  
+  # Local Storage
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  
+  # Calendar Display
+  table_calendar: ^3.0.9
+  
+  # Color Picker
+  flutter_colorpicker: ^1.0.3
+  
+  # Date Formatting
+  intl: ^0.18.1
+  
+  # UUID generation
+  uuid: ^4.3.3
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
