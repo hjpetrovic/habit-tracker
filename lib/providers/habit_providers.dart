@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 import '../services/habit_service.dart';
 
@@ -139,7 +140,7 @@ class DailyEntriesNotifier extends StateNotifier<DailyEntriesState> {
         currentEntries[habitId] = {};
       }
       
-      currentEntries[habitId]![date.year.toString() + date.month.toString() + date.day.toString()] = DailyEntry(
+      currentEntries[habitId]![dateKey(date)] = DailyEntry(
         habitId: habitId,
         date: date,
         isCompleted: newStatus,
@@ -177,10 +178,21 @@ class ThemeState {
 }
 
 class ThemeNotifier extends StateNotifier<ThemeState> {
-  ThemeNotifier() : super(ThemeState());
+  ThemeNotifier() : super(ThemeState()) {
+    _loadTheme();
+  }
 
-  void toggleTheme() {
-    state = state.copyWith(isDarkMode: !state.isDarkMode);
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDarkMode') ?? false;
+    state = state.copyWith(isDarkMode: isDark);
+  }
+
+  Future<void> toggleTheme() async {
+    final newValue = !state.isDarkMode;
+    state = state.copyWith(isDarkMode: newValue);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', newValue);
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../models/models.dart';
 import '../providers/habit_providers.dart';
 import '../widgets/color_picker_widget.dart';
+import '../widgets/target_days_picker.dart';
 import '../utils/colors.dart';
 
 class AddHabitScreen extends ConsumerStatefulWidget {
@@ -17,6 +18,7 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   int _selectedColor = AppColors.habitColors[4].value;
+  int _targetDays = 7;
   bool _isLoading = false;
 
   @override
@@ -41,6 +43,7 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
         color: _selectedColor,
         createdDate: DateTime.now(),
         isActive: true,
+        targetDays: _targetDays,
       );
 
       await ref.read(habitListProvider.notifier).addHabit(habit);
@@ -105,6 +108,16 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
               onColorSelected: (color) {
                 setState(() {
                   _selectedColor = color;
+                });
+              },
+              isDark: isDark,
+            ),
+            const SizedBox(height: 24),
+            TargetDaysPicker(
+              targetDays: _targetDays,
+              onChanged: (value) {
+                setState(() {
+                  _targetDays = value;
                 });
               },
               isDark: isDark,

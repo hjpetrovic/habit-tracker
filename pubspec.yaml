@@ -28,6 +28,9 @@ dependencies:
   
   # UUID generation
   uuid: ^4.3.3
+
+  # Persistent settings storage
+  shared_preferences: ^2.2.2
   
   # Icons
   cupertino_icons: ^1.0.6

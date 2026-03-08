@@ -4,6 +4,7 @@ class Habit {
   final int color; // ARGB color as int
   final DateTime createdDate;
   final bool isActive;
+  final int targetDays; // how many days per week to complete (1-7)
 
   Habit({
     required this.id,
@@ -11,6 +12,7 @@ class Habit {
     required this.color,
     required this.createdDate,
     this.isActive = true,
+    this.targetDays = 7,
   });
 
   Habit copyWith({
@@ -19,6 +21,7 @@ class Habit {
     int? color,
     DateTime? createdDate,
     bool? isActive,
+    int? targetDays,
   }) {
     return Habit(
       id: id ?? this.id,
@@ -26,6 +29,7 @@ class Habit {
       color: color ?? this.color,
       createdDate: createdDate ?? this.createdDate,
       isActive: isActive ?? this.isActive,
+      targetDays: targetDays ?? this.targetDays,
     );
   }
 
@@ -36,6 +40,7 @@ class Habit {
       'color': color,
       'createdDate': createdDate.toIso8601String(),
       'isActive': isActive ? 1 : 0,
+      'targetDays': targetDays,
     };
   }
 
@@ -46,6 +51,7 @@ class Habit {
       color: map['color'] as int,
       createdDate: DateTime.parse(map['createdDate'] as String),
       isActive: (map['isActive'] as int) == 1,
+      targetDays: (map['targetDays'] as int?) ?? 7,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../models/models.dart';
 import '../providers/habit_providers.dart';
 import '../widgets/color_picker_widget.dart';
+import '../widgets/target_days_picker.dart';
 import '../utils/colors.dart';
 
 class HabitDetailScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class HabitDetailScreen extends ConsumerStatefulWidget {
 class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
   late TextEditingController _nameController;
   late int _selectedColor;
+  late int _targetDays;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   bool _isEditing = false;
@@ -32,6 +34,7 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
     super.initState();
     _nameController = TextEditingController(text: widget.habit.name);
     _selectedColor = widget.habit.color;
+    _targetDays = widget.habit.targetDays;
     _focusedDay = DateTime.now();
     _selectedDay = DateTime.now();
     
@@ -79,6 +82,7 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
       final updatedHabit = widget.habit.copyWith(
         name: _nameController.text.trim(),
         color: _selectedColor,
+        targetDays: _targetDays,
       );
 
       await ref.read(habitListProvider.notifier).updateHabit(updatedHabit);
@@ -183,6 +187,7 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
               onPressed: () {
                 setState(() {
                   _isEditing = false;
+                  _targetDays = widget.habit.targetDays;
                 });
               },
             ),
@@ -212,6 +217,16 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
               onColorSelected: (color) {
                 setState(() {
                   _selectedColor = color;
+                });
+              },
+              isDark: isDark,
+            ),
+            const SizedBox(height: 24),
+            TargetDaysPicker(
+              targetDays: _targetDays,
+              onChanged: (value) {
+                setState(() {
+                  _targetDays = value;
                 });
               },
               isDark: isDark,
@@ -393,6 +408,13 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
                     DateFormat('MMM dd, yyyy').format(widget.habit.createdDate),
                   ),
                   _buildInfoRow('Status', widget.habit.isActive ? 'Active' : 'Inactive'),
+                  _buildInfoRow(
+                    'Weekly Target',
+                    widget.habit.targetDays == 7
+                        ? 'Every day'
+                        : '${widget.habit.targetDays} days / week',
+                  ),
+                  _buildInfoRow('This Week', _weeklyProgressText(ref)),
                 ],
               ),
             ),
@@ -400,6 +422,23 @@ class _HabitDetailScreenState extends ConsumerState<HabitDetailScreen> {
         ],
       ),
     );
+  }
+
+  String _weeklyProgressText(WidgetRef ref) {
+    final entriesState = ref.read(dailyEntriesProvider);
+    final habitEntries = entriesState.entries[widget.habit.id] ?? {};
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
+    int count = 0;
+    for (int i = 0; i < 7; i++) {
+      final day = startOfWeek.add(Duration(days: i));
+      if (day.isAfter(today)) break;
+      final key = '${day.year}-${day.month}-${day.day}';
+      if (habitEntries[key]?.isCompleted ?? false) count++;
+    }
+    final target = widget.habit.targetDays;
+    return count >= target ? '$count / $target days ✓' : '$count / $target days';
   }
 
   Widget _buildInfoRow(String label, String value) {

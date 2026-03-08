@@ -112,6 +112,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           habit: habit,
                           entries: habitEntries,
                           isDark: isDark,
+                          onToggleToday: () async {
+                            await ref
+                                .read(dailyEntriesProvider.notifier)
+                                .toggleEntry(habit.id, DateTime.now());
+                          },
                           onTap: () {
                             Navigator.push(
                               context,

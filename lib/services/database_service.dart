@@ -20,9 +20,18 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: _upgradeDB,
     );
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE habits ADD COLUMN targetDays INTEGER NOT NULL DEFAULT 7',
+      );
+    }
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -32,7 +41,8 @@ class DatabaseService {
         name TEXT NOT NULL,
         color INTEGER NOT NULL,
         createdDate TEXT NOT NULL,
-        isActive INTEGER NOT NULL DEFAULT 1
+        isActive INTEGER NOT NULL DEFAULT 1,
+        targetDays INTEGER NOT NULL DEFAULT 7
       )
     ''');
 
