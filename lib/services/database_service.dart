@@ -66,6 +66,11 @@ class DatabaseService {
     await db.close();
   }
 
+  // For use in tests only — resets the singleton so a fresh DB is opened.
+  static void resetForTesting() {
+    _database = null;
+  }
+
   Future<Habit> addHabit(Habit habit) async {
     final db = await database;
     await db.insert('habits', habit.toMap());

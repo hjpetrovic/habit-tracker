@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:habit_tracker/main.dart';
 import 'package:habit_tracker/models/models.dart';
+import 'package:habit_tracker/services/database_service.dart';
 import 'package:habit_tracker/widgets/habit_card.dart';
 import 'package:habit_tracker/widgets/target_days_picker.dart';
 
 void main() {
+  setUpAll(() {
+    // Use FFI-based SQLite so sqflite works in the Linux CI test environment.
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  });
+
+  setUp(() async {
+    // Reset the DB singleton so each test gets a fresh in-memory database.
+    DatabaseService.resetForTesting();
+    // Provide an empty SharedPreferences so ThemeNotifier doesn't throw.
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  tearDown(() async {
+    await DatabaseService.instance.close();
+    DatabaseService.resetForTesting();
+  });
+
   group('App startup', () {
     testWidgets('App starts and displays HomeScreen', (WidgetTester tester) async {
       await tester.pumpWidget(
